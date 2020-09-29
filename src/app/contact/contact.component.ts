@@ -2,6 +2,8 @@ import { Component, OnInit, ViewChild  } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Feedback, ContactType } from '../shared/feedback';
 import { flyInOut } from '../animations/app.animation';
+import { FeedbackService } from '../services/feedback.service';
+import { visibility } from '../animations/app.animation';
 
 @Component({
   selector: 'app-contact',
@@ -13,6 +15,7 @@ import { flyInOut } from '../animations/app.animation';
     'style': 'display: block;'
     },
     animations: [
+      visibility(),
       flyInOut()
     ]
 })
@@ -22,9 +25,15 @@ export class ContactComponent implements OnInit {
 
   feedbackForm: FormGroup;
   feedback: Feedback;
-  contactType = ContactType;
+  feedbackcopy: Feedback;
+  errMess: string;
 
-  constructor(private fb: FormBuilder) { 
+  contactType = ContactType;
+  visibility = 'shown';
+  
+
+  constructor(private fb: FormBuilder,
+    private feedbackservice: FeedbackService) { 
     this.createForm();
   }
 
@@ -99,16 +108,29 @@ export class ContactComponent implements OnInit {
   onSubmit() {
     this.feedback = this.feedbackForm.value;
     console.log(this.feedback);
-    this.feedbackForm.reset({
-      firstname: '',
-      lastname: '',
-      telnum: '',
-      email: '',
-      agree: false,
-      contacttype: 'None',
-      message: ''
-    });
-    this.feedbackFormDirective.resetForm();
+    this.feedbackcopy = this.feedback;
+    this.feedbackservice.submitFeedback(this.feedbackcopy)
+      .subscribe(feedback => {
+        this.feedback = feedback; this.feedbackcopy = feedback;
+      },
+      errmess => { this.feedback = null; this.feedbackcopy = null; this.errMess = <any>errmess; });
+
+      this.visibility = 'hidden';
+
+     
+      this.feedbackForm.reset({
+        firstname: '',
+        lastname: '',
+        telnum: '',
+        email: '',
+        agree: false,
+        contacttype: 'None',
+        message: ''
+      });
+      this.feedbackFormDirective.resetForm();
+      /** 
+      
+      */
   }
 
 }
