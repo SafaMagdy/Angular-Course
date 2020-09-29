@@ -80,7 +80,24 @@
     <button type="submit" mat-button class="background-primary text-floral-white">Submit</button>
   </form>
 </div>
-<div [hidden]="feedback">
+<div [hidden]="hide" [@expand]>
   <mat-spinner></mat-spinner><h4>Loading . . . Please Wait</h4>
+</div>
+<div *ngIf="feedback" [@expand]>
+  <h4>Your Submission</h4>
+  <p>
+    First Name: {{ feedback.firstname }} <br/>
+
+    Last Name: {{ feedback.lastname }} <br/>
+
+    Tel. Number: {{ feedback.telnum }} <br/>
+
+    Email: {{ feedback.email }} <br/>
+
+    Contact You?: {{ feedback.agree }} <br/>
+
+    How?: {{ feedback.contacttype }} <br/>
+    Feedback: {{ feedback.message }} <br/>
+  </p>
 </div>
 </div>
